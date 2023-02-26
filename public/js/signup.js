@@ -14,8 +14,14 @@ function onSubmit(e) {
         .post('http://localhost:3000/user/signup', signupObject)
         .then((response) => {
             console.log(response);
+            alert(`User signup successful with email`);
+            window.location.href = "../html/login.html";
         })
         .catch((err) => {
-            document.body.innerHTML += `<span class='text-danger'>${err.response.data.error}</span>`;
+            if(err.response.data.error){
+                document.body.innerHTML += `<span class='text-danger'>${err.response.data.error}</span>`;
+            } else {
+                console.log(err);
+            }
         });
 }
