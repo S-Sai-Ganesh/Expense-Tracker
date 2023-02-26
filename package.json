@@ -1,0 +1,30 @@
+{
+  "name": "expensetracker",
+  "version": "1.0.0",
+  "description": "Expense Tracker Project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/code-Fighter1/Expense-Tracker.git"
+  },
+  "author": "SAI GANESH SANGALA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/code-Fighter1/Expense-Tracker/issues"
+  },
+  "homepage": "https://github.com/code-Fighter1/Expense-Tracker#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.3",
+    "mysql2": "^3.1.0",
+    "sequelize": "^6.28.0"
+  }
+}

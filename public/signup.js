@@ -7,7 +7,7 @@ function onSubmit(e) {
     let signupObject = {
         name: document.getElementById('name').value,
         email: document.getElementById('email').value,
-        password: document.getElementById('password'),
+        password: document.getElementById('password').value
     };
 
     axios
@@ -16,7 +16,6 @@ function onSubmit(e) {
             console.log(response);
         })
         .catch((err) => {
-            console.log(err);
-            document.body.innerHTML += `<span class='text-danger'>${err}</span>`;
+            document.body.innerHTML += `<span class='text-danger'>${err.response.data.error}</span>`;
         });
 }
