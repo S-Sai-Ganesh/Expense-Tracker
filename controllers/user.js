@@ -22,20 +22,20 @@ exports.postUser = async (req, res, next) => {
 };
 
 exports.postLogin = async (req, res, next) => {
-    try{
+    try {
         const email = req.body.email;
         const loginPassword = req.body.password;
-        
-        const userExist = await User.findAll({where : {email: email}})
 
-        if(userExist && userExist.length){
-            if(userExist[0].dataValues.password == loginPassword){
-                res.status(201).json({ message: 'User logged in successfully', success: 'true'});
+        const userExist = await User.findAll({ where: { email: email } })
+
+        if (userExist && userExist.length) {
+            if (userExist[0].dataValues.password == loginPassword) {
+                res.status(201).json({ message: 'User logged in successfully', success: 'true' });
             } else {
-                res.status(500).json({ error: "Wrong password" })
+                res.status(401).json({ error: "User not authorized. Wrong password" })
             }
         } else {
-            res.status(500).json({ error: "User doesnot exist try with different email" })
+            res.status(404).json({ error: "User doesnot exist. Try with different email" })
         }
     } catch (err) {
         console.log(err);
