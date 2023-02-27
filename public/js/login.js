@@ -15,6 +15,7 @@ function onSubmit(e) {
         .then((result) => {
             console.log(result.data.message);
             alert('Login successfull!!')
+            window.location.href = '../html/daily-expense.html'
         })
         .catch((err) => {
             console.log(err);

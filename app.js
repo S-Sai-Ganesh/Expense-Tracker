@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const userRoutes = require('./routes/user');
+const expenseRoutes = require('./routes/expense');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', userRoutes);
+app.use('/expense',expenseRoutes);
 
 sequelize
     .sync()
