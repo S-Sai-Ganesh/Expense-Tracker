@@ -13,15 +13,11 @@ function onSubmit(e) {
 
     axios.post('http://localhost:3000/user/login', loginObject)
         .then((result) => {
-            console.log(result);
+            console.log(result.data.message);
             alert('Login successfull!!')
         })
         .catch((err) => {
-            if (err.response.data.error) {
-                document.body.innerHTML += `<span class='text-danger'>${err.response.data.error}</span>`;
-            } else {
-                console.log(err);
-            }
+            console.log(err);
             document.body.innerHTML += `<button onclick="window.location.href = '../html/login.html'">Reload</button>`
         });
 }

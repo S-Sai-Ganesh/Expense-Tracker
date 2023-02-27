@@ -13,16 +13,12 @@ function onSubmit(e) {
     axios
         .post('http://localhost:3000/user/signup', signupObject)
         .then((response) => {
-            console.log(response);
+            console.log(response.data.message);
             alert(`User signup successful with email`);
             window.location.href = "../html/login.html";
         })
         .catch((err) => {
-            if (err.response.data.error) {
-                document.body.innerHTML += `<span class='text-danger'>${err.response.data.error}</span>`;
-            } else {
-                console.log(err);
-            }
+            console.log(err);
             document.body.innerHTML += `<button onclick="window.location.href = '../html/signup.html'">Reload</button>`
         });
 }
