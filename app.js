@@ -3,6 +3,9 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const Expense = require('./models/expense');
+const User = require('./models/User');
+
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 
@@ -17,6 +20,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', userRoutes);
 app.use('/expense',expenseRoutes);
+
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
 sequelize
     .sync()

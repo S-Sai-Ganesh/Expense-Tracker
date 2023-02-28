@@ -11,9 +11,11 @@ function onSubmit(e){
         description: document.getElementById('description').value,
         category: document.getElementById('category').value
     }
+    
+    const token = localStorage.getItem('token');
 
     if(editingExpenseId === null){
-        axios.post('http:/localhost:3000/expense/post-expense',expenseObj)
+        axios.post('http:/localhost:3000/expense/post-expense', expenseObj, { headers: {'Authorization': token} })
         .then((response) => {
             addNewLineElement(response.data)
         }).catch((err) => {
@@ -22,7 +24,7 @@ function onSubmit(e){
         }
         );
     } else {
-        axios.post(`http:/localhost:3000/expense/edit-expense/${editingExpenseId}`,expenseObj)
+        axios.post(`http:/localhost:3000/expense/edit-expense/${editingExpenseId}`,expenseObj, { headers: {'Authorization': token} })
         .then((response) => {
             const parRes = JSON.parse(response.config.data);
             addNewLineElement(parRes);
@@ -36,7 +38,8 @@ function onSubmit(e){
 
 if (document.readyState == "loading" ){
     
-    axios.get('http:/localhost:3000/expense/get-expenses')
+    const token = localStorage.getItem('token');
+    axios.get('http:/localhost:3000/expense/get-expenses', { headers: {'Authorization': token} } )
         .then((result) => {
             result.data.forEach(element => {
                 addNewLineElement(element);
@@ -56,12 +59,14 @@ function addNewLineElement(expenseDetails){
         document.createTextNode('$' + expenseDetails.amount + ' - Category:' + expenseDetails.category + ' - Description:' + expenseDetails.description + ' ')
     );
 
+    const token = localStorage.getItem('token');
+
     const delBtn = document.createElement('input');
     delBtn.id='delete';
     delBtn.type='button';
     delBtn.value='delete';
     delBtn.addEventListener('click', ()=> {
-        axios.get(`http:/localhost:3000/expense/delete-expense/${expenseDetails.id}`)
+        axios.get(`http:/localhost:3000/expense/delete-expense/${expenseDetails.id}`, { headers: {'Authorization': token} })
         li.remove();
     });
     delBtn.style.border = '2px solid red';
