@@ -10,7 +10,7 @@ exports.postUser = async (req, res, next) => {
 
         bcrypt.hash(password, 10, async (err, hash) => {
             if(err) console.log(err);
-            await User.create({ name, email, password: hash });
+            await User.create({ name, email, password: hash, isPremiumUser: false });
             res.status(201).json({ message: 'Succcessfully created new user' });
         });
 

@@ -19,6 +19,7 @@ function onSubmit(e) {
         })
         .catch((err) => {
             console.log(err);
+            document.body.innerHTML += err.response.data.error;
             document.body.innerHTML += `<button onclick="window.location.href = '../html/login.html'">Reload</button>`
         });
 }

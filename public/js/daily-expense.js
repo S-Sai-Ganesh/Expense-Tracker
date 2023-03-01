@@ -1,6 +1,7 @@
 let editingExpenseId = null;
+const token = localStorage.getItem('token');
 
-const expense = document.getElementById('expense')
+const expense = document.getElementById('expense');
 expense.addEventListener('submit', onSubmit);
 
 function onSubmit(e){
@@ -12,7 +13,6 @@ function onSubmit(e){
         category: document.getElementById('category').value
     }
     
-    const token = localStorage.getItem('token');
 
     if(editingExpenseId === null){
         axios.post('http:/localhost:3000/expense/post-expense', expenseObj, { headers: {'Authorization': token} })
@@ -38,7 +38,7 @@ function onSubmit(e){
 
 if (document.readyState == "loading" ){
     
-    const token = localStorage.getItem('token');
+    
     axios.get('http:/localhost:3000/expense/get-expenses', { headers: {'Authorization': token} } )
         .then((result) => {
             result.data.forEach(element => {
@@ -59,7 +59,7 @@ function addNewLineElement(expenseDetails){
         document.createTextNode('$' + expenseDetails.amount + ' - Category:' + expenseDetails.category + ' - Description:' + expenseDetails.description + ' ')
     );
 
-    const token = localStorage.getItem('token');
+    
 
     const delBtn = document.createElement('input');
     delBtn.id='delete';
@@ -88,4 +88,30 @@ function addNewLineElement(expenseDetails){
     editBtn.style.border = '2px solid green';
     li.appendChild(editBtn);
     ul.appendChild(li);
+}
+
+document.getElementById('premium').onclick = async function (e) {
+    const response  = await axios.get('http://localhost:3000/purchase/premium-membership', { headers: {"Authorization" : token} });
+    console.log(response);
+    var options =
+    {
+     "key": response.data.key_id,
+     "order_id": response.data.order.id,
+     "handler": async function (response) {
+        const result = await axios.post("http://localhost:3000/purchase/update-transaction-status", {
+            order_id: options.order_id, payment_id: response.razorpay_payment_id
+        }, { headers: { "authorization": token } })
+        alert("You are now a premium user")
+        }
+    }
+
+    const rzrp1 = new Razorpay(options);
+    rzrp1.open();
+    e.preventDefault();
+    
+    rzrp1.on("payment.failed", () => {
+        axios.post("http://localhost:3000/purchase/update-transaction-status", { order_id: response.data.order.id }, { headers: { "authorization": token } })
+        alert("something went wrong");
+        rzrp1.close()
+    })
 }
