@@ -23,8 +23,8 @@ exports.postUser = async (req, res, next) => {
     }
 };
 
-function generateAccessToken(id, name) {
-    return jwt.sign({ userId: id, name: name}, 'mysecretkey.987654321');
+exports.generateAccessToken=(id, name, isPremiumUser) => {
+    return jwt.sign({ userId: id, name: name, isPremiumUser:isPremiumUser}, 'mysecretkey.987654321');
 }
 
 exports.postLogin = async (req, res, next) => {
@@ -41,7 +41,9 @@ exports.postLogin = async (req, res, next) => {
                     throw new Error('Something went wrong');
                 }
                 if (result) {
-                    res.status(200).json({ message: 'User logged in successfully', success: true, token: generateAccessToken(userExist[0].dataValues.id, userExist[0].dataValues.name) });
+                    res.status(200).json({ message: 'User logged in successfully', 
+                    success: true, 
+                    token: exports.generateAccessToken(userExist[0].dataValues.id, userExist[0].dataValues.name, userExist[0].dataValues.isPremiumUser )});
                 } else {
                     res.status(401).json({ error: "User not authorized. Wrong password", success: false });
                 }

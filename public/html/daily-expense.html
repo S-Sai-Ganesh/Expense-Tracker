@@ -39,12 +39,17 @@
             
         </section>
         <br>
-        <div>
+        <div id="if-premium">
           <button id="premium"> Buy Premium </button>
+          <button id="leaderboard-btn" hidden> Show Leaderboard </button>
         </div>
         <div style='text-align:center'>
             <h6>Tracker</h6>
             <ul id="tracker"></ul>
+        </div>
+        <div style="text-align:center" id="leaderboard-tracker" hidden> 
+          <h6>Leaderboard</h6>
+          <ul id="leaderboard-list"></ul>
         </div>
 
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
