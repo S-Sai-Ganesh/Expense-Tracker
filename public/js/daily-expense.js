@@ -149,7 +149,7 @@ axios.get("http://localhost:3000/premium/show-leaderboard", { headers: { "author
             const li = document.createElement("li");
             li.id = "leaderboard-li"
             li.appendChild(document.createTextNode(` Name : ${res.data[i].name} ,`));
-            li.appendChild(document.createTextNode(`Total Expense : ${res.data[i].total_cost || 0}`));
+            li.appendChild(document.createTextNode(`Total Expense : ${res.data[i].totalExpense || 0}`));
             leaderboardElements.push(li);
         }
     })

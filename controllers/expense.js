@@ -1,4 +1,5 @@
 const Expense = require('../models/expense');
+const User = require('../models/User');
 
 exports.getExpenses = async (req, res, next) => {
     try{
@@ -21,6 +22,11 @@ exports.postExpense = async (req, res, next) => {
         category:category,
         userId: req.user.id
     });
+    const tExpense = +req.user.totalExpense + +amount;
+    User.update(
+        { totalExpense: tExpense},
+        {where: {id:req.user.id}}
+        )
     res.status(201).json( data);
     } catch (err) {
         res.status(500).json({error:err})
@@ -44,6 +50,20 @@ exports.editExpense = async (req,res,next)=>{
     const amount = req.body.amount;
     const description = req.body.description;
     const category = req.body.category;
+
+    const befExpense = await Expense.findByPk(expenseId,{
+        attributes: ['amount'],
+        raw: true
+    });
+    const chUser = await User.findByPk(req.user.dataValues.id,{
+        attributes: ['totalExpense'],
+        raw: true
+    })
+    const updatedExpense = +chUser.totalExpense - +befExpense.amount + +amount;
+    const updatedUser = await User.update({
+        totalExpense: updatedExpense
+    },{where: {id:req.user.dataValues.id}})
+
     const data = await Expense.update({
         amount: amount,
         description:description,

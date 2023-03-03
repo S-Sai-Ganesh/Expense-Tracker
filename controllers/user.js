@@ -10,16 +10,13 @@ exports.postUser = async (req, res, next) => {
 
         bcrypt.hash(password, 10, async (err, hash) => {
             if(err) console.log(err);
-            await User.create({ name, email, password: hash, isPremiumUser: false });
+            await User.create({ name, email, password: hash, isPremiumUser: false, totalExpense: 0 });
             res.status(201).json({ message: 'Succcessfully created new user' });
         });
 
     } catch (err) {
-        if (err.name === 'SequelizeUniqueConstraintError') {
-            res.status(500).json({ error: err.errors[0].message });
-        } else {
-            res.status(500).json({ error: err });
-        }
+        console.log(err);
+        res.status(500).json({ error: err });
     }
 };
 
