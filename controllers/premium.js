@@ -7,11 +7,6 @@ exports.getLeaderBoard = async (req, res, next) => {
     try {
         const userLeaderBoardDetails = await User.findAll({
             attributes: ['id','name', 'totalExpense'],
-            include: [{
-                model: Expense,
-                attributes: []
-            }],
-            group:['users.id'],
             order:[['totalExpense', 'DESC']]
         });
         res.status(200).json(userLeaderBoardDetails);
