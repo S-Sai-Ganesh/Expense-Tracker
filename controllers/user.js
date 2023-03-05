@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Sib = require('sib-api-v3-sdk');
+require('dotenv').config();
 
 exports.postUser = async (req, res, next) => {
     try {
@@ -50,5 +52,37 @@ exports.postLogin = async (req, res, next) => {
         }
     } catch (err) {
         res.status(500).json({ error: err, success: false })
+    }
+}
+
+
+exports.postForgotPassword = async (req,res,next) => {
+    try {
+
+        const client = Sib.ApiClient.instance;
+        const apiKey = client.authentications['api-key']
+        apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
+        const tranEmailApi = new Sib.TransactionalEmailsApi();
+
+        const sender = {
+            email: 'ganeshsai29101@gmail.com',
+            name: 'Sai Ganesh'
+        }
+
+        const receivers = [
+            {
+            email: `${req.body.email}`
+            }
+        ]
+
+        await tranEmailApi.sendTransacEmail({
+            sender,
+            to: receivers,
+            subject: 'Reset Password',
+            textContent: `Reset Password`
+        }).then(res=>console.log(res)).catch(err=>console.log(err))
+        res.status(201).json({success: true,message: 'Reset Password Success'})
+    } catch(err) {
+        console.log(err);
     }
 }
