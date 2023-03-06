@@ -46,15 +46,16 @@ function parseJwt (token) {
     return JSON.parse(jsonPayload);
 }
 
+function enablePremium(){
+    document.getElementById('premium').setAttribute('hidden','hidden');
+    document.getElementById('leaderboard-btn').removeAttribute('hidden');
+    document.getElementById('if-premium').innerHTML = '<p>You are now a Premium User</p>' + document.getElementById('if-premium').innerHTML;
+}
+
 if (document.readyState == "loading" ){
     const decodeToken = parseJwt(token);
-    console.log(decodeToken);
     const isAdmin = decodeToken.isPremiumUser;
-    if(isAdmin){
-        document.getElementById('premium').setAttribute('hidden','hidden');
-        document.getElementById('leaderboard-btn').removeAttribute('hidden');
-        document.getElementById('if-premium').innerHTML = '<p>You are now a Premium User</p>' + document.getElementById('if-premium').innerHTML;
-    }
+    if(isAdmin){enablePremium()}
 
     axios.get('http:/localhost:3000/expense/get-expenses', { headers: {'Authorization': token} } )
         .then((result) => {
@@ -109,7 +110,7 @@ function addNewLineElement(expenseDetails){
 
 document.getElementById('premium').onclick = async function (e) {
     const response  = await axios.get('http://localhost:3000/purchase/premium-membership', { headers: {"Authorization" : token} });
-    console.log(response);
+    
     var options =
     {
      "key": response.data.key_id,
@@ -118,12 +119,11 @@ document.getElementById('premium').onclick = async function (e) {
         const result = await axios.post("http://localhost:3000/purchase/update-transaction-status", {
             order_id: options.order_id, payment_id: response.razorpay_payment_id
         }, { headers: { "authorization": token } });
-        console.log(result.data.token);
+
         alert("You are now a premium user");
         localStorage.setItem('token',result.data.token);
-        document.getElementById('premium').setAttribute('hidden','hidden');
-        document.getElementById('leaderboard-btn').removeAttribute('hidden');
-        document.getElementById('if-premium').innerHTML='<h4>You are now a Premium User</h4>';
+        enablePremium();
+        location.reload();
         }
     }
 
@@ -159,18 +159,45 @@ axios.get("http://localhost:3000/premium/show-leaderboard", { headers: { "author
 
 leaderboardBtn.onclick = (e) => {
     e.preventDefault();
-    document.getElementById('leaderboard-tracker').removeAttribute('hidden');
 
     if (leaderboardDisplayed) {
         leaderboardBtn.innerHTML = 'Show Leaderboard';
+        document.getElementById('leaderboard-tracker').setAttribute('hidden', 'hidden');
         leaderboardList.style.display = 'none';
         leaderboardDisplayed = false;
     } else {
         leaderboardBtn.innerHTML = 'Hide Leaderboard';
+        document.getElementById('leaderboard-tracker').removeAttribute('hidden');
         leaderboardList.style.display = 'block';
         leaderboardElements.forEach(element => {
             leaderboardList.append(element)
         });
         leaderboardDisplayed = true;
     }
+}
+
+let reportBtn = document.getElementById('report-btn');
+let reportDisplayed = false;
+reportBtn.onclick = (e) => {
+    e.preventDefault();
+    const decodeToken = parseJwt(token);
+    const isAdmin = decodeToken.isPremiumUser;
+
+    if(reportDisplayed){
+        reportDisplayed = false;
+        document.getElementById('initial-tracker').removeAttribute('hidden');
+        reportBtn.innerHTML = ' Expenses Report ';
+        document.getElementById('report-dwn-btn').setAttribute('hidden','hidden');
+        document.getElementById('report-tracker').setAttribute('hidden','hidden');
+
+    } else {
+        reportDisplayed = true;
+        document.getElementById('initial-tracker').setAttribute('hidden','hidden');
+        reportBtn.innerHTML = 'Hide Expenses Report';
+        if(isAdmin){
+        document.getElementById('report-dwn-btn').removeAttribute('hidden');
+        }
+        document.getElementById('report-tracker').removeAttribute('hidden');
+    }
+
 }

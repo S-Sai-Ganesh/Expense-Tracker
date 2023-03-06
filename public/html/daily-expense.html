@@ -41,11 +41,17 @@
         <br>
         <div id="if-premium">
           <button id="premium"> Buy Premium </button>
+          <button id="report-btn"> Expenses Report </button>
           <button id="leaderboard-btn" hidden> Show Leaderboard </button>
+          <button id="report-dwn-btn" hidden> Download Report </button>
         </div>
-        <div style='text-align:center'>
-            <h6>Tracker</h6>
+        <div style='text-align:center' id="initial-tracker">
+            <h6>Expense Tracker</h6>
             <ul id="tracker"></ul>
+        </div>
+        <div style="text-align:center" id="report-tracker" hidden>
+          <h6>Expense Report</h6>
+          <ul id="report-list"></ul>
         </div>
         <div style="text-align:center" id="leaderboard-tracker" hidden> 
           <h6>Leaderboard</h6>
