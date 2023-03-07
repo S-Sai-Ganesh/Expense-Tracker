@@ -21,6 +21,7 @@
     "nodemon": "^2.0.20"
   },
   "dependencies": {
+    "aws-sdk": "^2.1329.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
@@ -31,7 +32,6 @@
     "razorpay": "^2.8.6",
     "sequelize": "^6.28.0",
     "sib-api-v3-sdk": "^8.5.0",
-    "superagent": "^8.0.9",
     "uuid": "^9.0.0"
   }
 }

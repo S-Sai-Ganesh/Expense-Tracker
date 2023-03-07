@@ -177,8 +177,34 @@ leaderboardBtn.onclick = (e) => {
 }
 
 let reportBtn = document.getElementById('report-btn');
+let reportList = document.getElementById('report-list');
+let listno = 0;
 let reportDisplayed = false;
-reportBtn.onclick = (e) => {
+
+    axios.get('http://localhost:3000/expense/getAllUrl',{headers: {'Authorization' : token}})
+    .then((res) => {
+        if(res.status === 200){
+            console.log(res)
+            showUrls(res.data)
+        }
+    }).catch(err=> console.log(err));
+
+    function showUrls(data){
+    console.log('ShowUrls>>>',data.urls);
+        data.urls.forEach(url => {
+            const li= document.createElement('a');
+            li.id = 'report-list-li';
+            li.href = `${url.fileURL}`;
+            li.appendChild(document.createTextNode(`${listno + 1}. ${url.filename.split('Expense')[1]}`));
+            reportList.append(li);
+            const lineBreak = document.createElement('br');
+            reportList.appendChild(lineBreak);
+            listno++
+        })
+    }
+    
+
+reportBtn.onclick = async (e) => {
     e.preventDefault();
     const decodeToken = parseJwt(token);
     const isAdmin = decodeToken.isPremiumUser;
@@ -200,4 +226,32 @@ reportBtn.onclick = (e) => {
         document.getElementById('report-tracker').removeAttribute('hidden');
     }
 
+}
+
+const reportDwnBtn = document.getElementById('report-dwn-btn');
+reportDwnBtn.addEventListener('click', (e)=> {
+    e.preventDefault();
+    axios.get('http:localhost:3000/expense/download', { headers: { "authorization": token } }).then((response) => {
+            console.log(response);
+            showUrlOnScreen(response.data.downloadUrlData);
+            var a = document.createElement("a");
+            a.href = response.data.fileURL;
+            a.download = 'Expense.txt';
+            a.click();
+        })
+    .catch((err) => {
+        console.log(err);
+    });
+});
+
+function showUrlOnScreen(data){
+    console.log('showUrlOnScreen>>>' , data);
+    const li= document.createElement('a');
+    li.id = 'report-list-li';
+    li.href = `${data.fileURL}`;
+    li.appendChild(document.createTextNode(`${listno + 1}. ${data.filename.split('Expense')[1]}`));
+    reportList.append(li);
+    const lineBreak = document.createElement('br');
+    reportList.appendChild(lineBreak);
+    listno++;
 }

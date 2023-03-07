@@ -1,6 +1,42 @@
 const Expense = require('../models/expense');
 const User = require('../models/User');
 const sequelize = require('../util/database');
+const DownloadUrl = require('../models/downloadUrl');
+const UserServices = require('../services/UserServices');
+const S3services = require('../services/S3services');
+
+exports.getDownloadExpenses = async (req, res, next) => {
+    try {
+        const expenses = await UserServices.getExpenses(req);
+        const stringifiedExpenses = JSON.stringify(expenses);
+        const userId = req.user.id;
+        const filename = `${userId}Expense${new Date()}.txt`;
+        const fileURL = await S3services.uploadToS3(stringifiedExpenses,filename);
+
+        const downloadUrlData = await req.user.createDownloadUrl({
+            fileURL: fileURL,
+            filename
+        });
+
+        res.status(200).json({fileURL, downloadUrlData, success:true});
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({err,success:false,fileURL:''})
+    }
+}
+
+
+exports.getDownloadAllUrl = async(req,res,next) => {
+    try {
+        let urls = await req.user.getDownloadUrls();
+        if(!urls){
+            res.sttus(404).json({ message: 'no urls found'})
+        }
+        res.status(200).json({ urls, success: true})
+    } catch (error) {
+        res.status(500).json({error})
+    }
+}
 
 exports.getExpenses = async (req, res, next) => {
     try{
