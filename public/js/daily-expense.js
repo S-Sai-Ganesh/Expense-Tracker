@@ -52,22 +52,79 @@ function enablePremium(){
     document.getElementById('if-premium').innerHTML = '<p>You are now a Premium User</p>' + document.getElementById('if-premium').innerHTML;
 }
 
+let currentPage = 1;
+let lastFEPage=1;
 if (document.readyState == "loading" ){
     const decodeToken = parseJwt(token);
     const isAdmin = decodeToken.isPremiumUser;
     if(isAdmin){enablePremium()}
 
-    axios.get('http:/localhost:3000/expense/get-expenses', { headers: {'Authorization': token} } )
+
+    axios.get(`http:/localhost:3000/expense/get-expenses/${currentPage}`, { headers: {'Authorization': token} } )
         .then((result) => {
-            result.data.forEach(element => {
+            console.log('result.data>>>>>',result.data);
+            result.data.data.forEach(element => {
                 addNewLineElement(element);
             });
+            showPagination(result.data.info);
+            lastFEPage = result.data.info.lastPage;
         }).catch((err) => {
             console.log(err);
             document.body.innerHTML+= '<h6> Error: Failed to load data from server</h6>'
         }
     );
 };
+
+
+function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previousPage,lastPage}){
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    if(hasPreviousPage){
+        const btn2 = document.createElement('button');
+        btn2.innerHTML = previousPage ;
+        btn2.addEventListener('click' , ()=>getPageExpenses(previousPage));
+        pagination.appendChild(btn2);
+    }
+
+    const btn1 = document.createElement('button');
+    btn1.innerHTML = currentPage ;
+    btn1.addEventListener('click' , ()=>getPageExpenses(currentPage));
+    pagination.appendChild(btn1);
+
+    if(hasNextPage){
+        const button3 = document.createElement('button');
+        button3.innerHTML = nextPage ;
+        button3.addEventListener('click' , ()=>getPageExpenses(nextPage));
+        pagination.appendChild(button3);
+    }
+
+    if( currentPage!=lastPage && nextPage!=lastPage && lastPage != 0){
+        const button3 = document.createElement('button');
+        button3.innerHTML = lastPage ;
+        button3.addEventListener('click' , ()=>getPageExpenses(page));
+        pagination.appendChild(button3);
+    }
+}
+
+async function getPageExpenses(page){
+    currentPage = page;
+    const tracker = document.getElementById('tracker');
+
+    const token = localStorage.getItem('token');
+
+    let response = await axios.get(`http://localhost:3000/expense/get-expenses/${page}`,{headers: { "Authorization": token}} );
+
+    console.log('fun: get page expenses>>',response.data.info);
+    if(response.status === 200){
+        tracker.innerHTML = ''
+        for(let i=0;i<response.data.data.length;i++){
+            addNewLineElement(response.data.data[i]);
+        }
+    }
+
+    showPagination(response.data.info)
+}
 
 function addNewLineElement(expenseDetails){
     const ul = document.getElementById('tracker');

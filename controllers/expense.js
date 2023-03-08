@@ -40,11 +40,25 @@ exports.getDownloadAllUrl = async(req,res,next) => {
 
 exports.getExpenses = async (req, res, next) => {
     try{
-    const all = await Expense.findAll({where: {userId: req.user.id}})
-    // const all = await req.user.getExpenses()
-        res.json(all);
+        let page = req.params.pageNo || 1;
+        let Items_Per_Page = 5;
+        const totalItems = await Expense.count({where: {userId: req.user.id}});
+        const data = await req.user.getExpenses({offset: (page-1)*Items_Per_Page,limit: Items_Per_Page})
+
+        res.status(200).json({
+            data,
+            info: {
+                currentPage: page,
+                hasNextPage: totalItems > page * Items_Per_Page,
+                hasPreviousPage: page > 1,
+                nextPage: +page + 1,
+                previousPage: +page - 1,
+                lastPage: Math.ceil(totalItems / Items_Per_Page) 
+            }
+        });
     }catch(err) {
        console.log(err);
+       res.status(500).json({error});
     }
 }
 
