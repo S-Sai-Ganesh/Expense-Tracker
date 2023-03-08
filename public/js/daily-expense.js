@@ -54,13 +54,14 @@ function enablePremium(){
 
 let currentPage = 1;
 let lastFEPage=1;
+const perpage = localStorage.getItem('perpage') || 5;
 if (document.readyState == "loading" ){
     const decodeToken = parseJwt(token);
     const isAdmin = decodeToken.isPremiumUser;
     if(isAdmin){enablePremium()}
 
 
-    axios.get(`http:/localhost:3000/expense/get-expenses/${currentPage}`, { headers: {'Authorization': token} } )
+    axios.get(`http:/localhost:3000/expense/get-expenses/${currentPage}`, {params: {perpage}, headers: {'Authorization': token} } )
         .then((result) => {
             console.log('result.data>>>>>',result.data);
             result.data.data.forEach(element => {
@@ -75,6 +76,13 @@ if (document.readyState == "loading" ){
     );
 };
 
+const dynamicPage = document.getElementById('dynamic-pagination');
+dynamicPage.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const perpage = document.getElementById('perpage').value;
+    localStorage.setItem('perpage',perpage);
+    window.location.reload();
+});
 
 function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previousPage,lastPage}){
     const pagination = document.getElementById('pagination');
@@ -113,7 +121,7 @@ async function getPageExpenses(page){
 
     const token = localStorage.getItem('token');
 
-    let response = await axios.get(`http://localhost:3000/expense/get-expenses/${page}`,{headers: { "Authorization": token}} );
+    let response = await axios.get(`http://localhost:3000/expense/get-expenses/${page}`, {params:{perpage}, headers: { "Authorization": token}} );
 
     console.log('fun: get page expenses>>',response.data.info);
     if(response.status === 200){

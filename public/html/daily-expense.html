@@ -34,6 +34,7 @@
                 </select>
             </div>
             <br>
+            <input type="reset" value="Reset">
             <input type="submit" value="Add Expense">
           </form>
             
@@ -53,6 +54,13 @@
         <div style="text-align:center" id="report-tracker" hidden>
           <h6>Expense Report</h6>
           <ul id="report-list"></ul>
+        </div>
+        <div style="text-align: center">
+          <form id="dynamic-pagination">
+            <label for="perpage">Expenses per page:</label>
+            <input type="number" id="perpage" name="perpage" min="5" max="100" step="5" value="5">
+            <input type="submit" value="Submit">
+          </form>
         </div>
         <div style="text-align:center" id="leaderboard-tracker" hidden> 
           <h6>Leaderboard</h6>
