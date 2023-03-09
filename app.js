@@ -1,8 +1,12 @@
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
 
+const dotenv = require('dotenv');
 dotenv.config();
 
 const Expense = require('./models/expense');
@@ -17,12 +21,17 @@ const purchaseRoutes = require('./routes/purchase');
 const premiumRoutes = require('./routes/premium');
 const forgotpasswordRoutes = require('./routes/forgotpassword');
 
-const app = express();
-
-const cors = require('cors');
 const sequelize = require('./util/database');
-app.use(cors());
 
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'access.log'),
+    { flags: 'a' }
+);
+
+const app = express();
+app.use(helmet());
+app.use(cors());
+app.use(morgan('combined', { stream: accessLogStream }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -48,7 +57,7 @@ sequelize
     .sync()
     // .sync({ force: true })
     .then(res => {
-        app.listen(3000, (err) => {
+        app.listen(process.env.PORT_DEFAULT, (err) => {
             if (err) console.log(err);
             console.log('Server is listening for requests');
         });

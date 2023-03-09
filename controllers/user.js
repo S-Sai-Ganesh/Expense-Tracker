@@ -30,7 +30,6 @@ exports.postLogin = async (req, res, next) => {
         const loginPassword = req.body.password;
 
         const userExist = await User.findAll({ where: { email: email } });
-        console.log(userExist);
 
         if (userExist && userExist.length) {
             bcrypt.compare(loginPassword, userExist[0].dataValues.password, (err, result) => {
