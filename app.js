@@ -40,6 +40,10 @@ app.use('/expense',expenseRoutes);
 app.use('/purchase', purchaseRoutes);
 app.use('/premium', premiumRoutes);
 app.use('/password', forgotpasswordRoutes);
+app.use((req,res)=>{
+    console.log('url>>', req.url);
+    res.sendFile(path.join(__dirname, `public/${req.url}`));
+})
 
 User.hasMany(Expense);
 Expense.belongsTo(User);

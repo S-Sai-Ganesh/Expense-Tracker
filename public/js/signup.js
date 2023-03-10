@@ -11,7 +11,7 @@ function onSubmit(e) {
     };
 
     axios
-        .post('http://localhost:3000/user/signup', signupObject)
+        .post('http://54.146.235.115:3000/user/signup', signupObject)
         .then((response) => {
             console.log(response.data.message);
             alert(`User signup successful with email`);

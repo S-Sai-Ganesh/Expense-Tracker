@@ -41,7 +41,7 @@ exports.postForgotPassword = async (req,res,next) => {
                 to: receivers,
                 subject: 'Reset Password',
                 textContent: `Reset Password`,
-                htmlContent: `<a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>`
+                htmlContent: `<a href="http://54.146.235.115:3000/password/resetpassword/${id}">Reset password</a>`
             })
             .then(res=>console.log(res))
             .catch(err=>{
