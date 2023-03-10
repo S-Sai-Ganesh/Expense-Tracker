@@ -21,7 +21,7 @@ exports.postUser = async (req, res, next) => {
 };
 
 exports.generateAccessToken=(id, name, isPremiumUser) => {
-    return jwt.sign({ userId: id, name: name, isPremiumUser:isPremiumUser}, 'mysecretkey.987654321');
+    return jwt.sign({ userId: id, name: name, isPremiumUser:isPremiumUser}, process.env.TOKEN_SECRET);
 }
 
 exports.postLogin = async (req, res, next) => {
