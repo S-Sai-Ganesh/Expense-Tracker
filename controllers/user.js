@@ -8,9 +8,13 @@ exports.postUser = async (req, res, next) => {
         const email = req.body.email;
         const password = req.body.password;
 
+        const userExist = await User.find({ email: email });
+        if(userExist && userExist.length) return res.status(409).json({message: 'User already exist'});
+
         bcrypt.hash(password, 10, async (err, hash) => {
             if(err) console.log(err);
-            await User.create({ name, email, password: hash, isPremiumUser: false, totalExpense: 0 });
+            const userr = new User({ name, email, password:hash, isPremiumUser: false, totalExpense: 0 });
+            await userr.save();
             res.status(201).json({ message: 'Succcessfully created new user' });
         });
 
@@ -29,17 +33,17 @@ exports.postLogin = async (req, res, next) => {
         const email = req.body.email;
         const loginPassword = req.body.password;
 
-        const userExist = await User.findAll({ where: { email: email } });
+        const userExist = await User.find({ email: email });
 
         if (userExist && userExist.length) {
-            bcrypt.compare(loginPassword, userExist[0].dataValues.password, (err, result) => {
+            bcrypt.compare(loginPassword, userExist[0].password, (err, result) => {
                 if (err) {
                     throw new Error('Something went wrong');
                 }
                 if (result) {
                     res.status(200).json({ message: 'User logged in successfully', 
                     success: true, 
-                    token: exports.generateAccessToken(userExist[0].dataValues.id, userExist[0].dataValues.name, userExist[0].dataValues.isPremiumUser )});
+                    token: exports.generateAccessToken(userExist[0]._id, userExist[0].name, userExist[0].isPremiumUser )});
                 } else {
                     res.status(401).json({ error: "User not authorized. Wrong password", success: false });
                 }

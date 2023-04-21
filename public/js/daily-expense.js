@@ -24,7 +24,7 @@ function onSubmit(e){
     }
     
     if(editingExpenseId === null){
-        axios.post('http://54.146.235.115:3000/expense/post-expense', expenseObj, { headers: {'Authorization': token} })
+        axios.post('http://localhost:3000/expense/post-expense', expenseObj, { headers: {'Authorization': token} })
         .then((response) => {
             addNewLineElement(response.data);
         }).catch((err) => {
@@ -32,7 +32,7 @@ function onSubmit(e){
             console.log(err);      
         });
     } else {
-        axios.post(`http://54.146.235.115:3000/expense/edit-expense/${editingExpenseId}`,expenseObj, { headers: {'Authorization': token} })
+        axios.post(`http://localhost:3000/expense/edit-expense/${editingExpenseId}`,expenseObj, { headers: {'Authorization': token} })
         .then((response) => {
             const parRes = JSON.parse(response.config.data);
             addNewLineElement(parRes);
@@ -64,7 +64,7 @@ let currentPage = 1;
 if (document.readyState == "loading" ){
     if(isAdmin){enablePremium()}
 
-    axios.get(`http://54.146.235.115:3000/expense/get-expenses/${currentPage}`, {params: {perpage}, headers: {'Authorization': token} } )
+    axios.get(`http://localhost:3000/expense/get-expenses/${currentPage}`, {params: {perpage}, headers: {'Authorization': token} } )
         .then((result) => {
             result.data.data.forEach(element => {
                 addNewLineElement(element);
@@ -118,7 +118,7 @@ function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previo
 async function getPageExpenses(page){
     currentPage = page;
 
-    let response = await axios.get(`http://54.146.235.115:3000/expense/get-expenses/${page}`, {params:{perpage}, headers: { "Authorization": token}} );
+    let response = await axios.get(`http://localhost:3000/expense/get-expenses/${page}`, {params:{perpage}, headers: { "Authorization": token}} );
 
     if(response.status === 200){
         trackerId.innerHTML = ''
@@ -142,7 +142,7 @@ function addNewLineElement(expenseDetails){
     delBtn.type='button';
     delBtn.value='delete';
     delBtn.addEventListener('click', ()=> {
-        axios.get(`http://54.146.235.115:3000/expense/delete-expense/${expenseDetails.id}`, { headers: {'Authorization': token} })
+        axios.get(`http://localhost:3000/expense/delete-expense/${expenseDetails._id}`, { headers: {'Authorization': token} })
         .then(()=>li.remove())
         .catch(err=>console.log(err));
     });
@@ -159,7 +159,7 @@ function addNewLineElement(expenseDetails){
         document.getElementById('description').value = expenseDetails.description;
         document.getElementById('category').value = expenseDetails.category;
         li.remove();
-        editingExpenseId = expenseDetails.id;
+        editingExpenseId = expenseDetails._id;
         console.log(editingExpenseId);
     });
     editBtn.style.border = '2px solid green';
@@ -168,14 +168,14 @@ function addNewLineElement(expenseDetails){
 }
 
 premiumId.onclick = async function (e) {
-    const response  = await axios.get('http://54.146.235.115:3000/purchase/premium-membership', { headers: {"Authorization" : token} });
+    const response  = await axios.get('http://localhost:3000/purchase/premium-membership', { headers: {"Authorization" : token} });
     
     var options =
     {
      "key": response.data.key_id,
      "order_id": response.data.order.id,
      "handler": async function (response) {
-        const result = await axios.post("http://54.146.235.115:3000/purchase/update-transaction-status", {
+        const result = await axios.post("http://localhost:3000/purchase/update-transaction-status", {
             order_id: options.order_id, payment_id: response.razorpay_payment_id
         }, { headers: { "authorization": token } });
 
@@ -191,7 +191,7 @@ premiumId.onclick = async function (e) {
     e.preventDefault();
     
     rzrp1.on("payment.failed", () => {
-        axios.post("http://54.146.235.115:3000/purchase/update-transaction-status", { order_id: response.data.order.id }, { headers: { "authorization": token } })
+        axios.post("http://localhost:3000/purchase/update-transaction-status", { order_id: response.data.order.id }, { headers: { "authorization": token } })
         alert("something went wrong");
         rzrp1.close()
     })
@@ -202,7 +202,7 @@ let leaderboardElements = [];
 let leaderboardList = document.getElementById('leaderboard-list');
 let leaderboardBtn = document.getElementById('leaderboard-btn');
 
-axios.get("http://54.146.235.115:3000/premium/show-leaderboard", { headers: { "authorization": token } })
+axios.get("http://localhost:3000/premium/show-leaderboard", { headers: { "authorization": token } })
     .then(res => {
         for (let i = 0; i < res.data.length; i++) {
             const li = document.createElement("li");
@@ -240,7 +240,7 @@ let reportList = document.getElementById('report-list');
 let listno = 0;
 let reportDisplayed = false;
 
-    axios.get('http://54.146.235.115:3000/expense/getAllUrl',{headers: {'Authorization' : token}})
+    axios.get('http://localhost:3000/expense/getAllUrl',{headers: {'Authorization' : token}})
     .then((res) => {
         if(res.status === 200){
             showUrls(res.data)
